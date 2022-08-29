@@ -27,7 +27,7 @@ function getUsers(searchTemp) {
       console.log(error);
     });
 }
-console.log("tem2",users);
+
 function addUsers(user) {
   apiAddUsers(user)
     .then(() => {
@@ -60,23 +60,6 @@ function updateUsers(userId, user) {
       console.log(error);
     });
 }
-
-let usersdata = [];
-let usersnew = [];
-function checkUsers(account) {
-  apiCheckUser()
-    .then((response) => {
-       usersdata = response.data;
-       usersnew = response.data.filter((user) => {
-        return user.taiKhoan !== account;
-      });
-      
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-}
-
 
 //===============================================
 // nhận vào arrat user
@@ -123,10 +106,9 @@ function resetForm() {
   dom("#loaiNguoiDung").value = "";
   dom("#loaiNgonNgu").value = "";
   dom("#MoTa").value = "";
-
 }
 
-function resetspan(){
+function resetspan() {
   dom("#spanTK").innerHTML = "";
   dom("#spanName").innerHTML = "";
   dom("#spanPW").innerHTML = "";
@@ -174,10 +156,10 @@ dom(".modal-footer").addEventListener("click", (evt) => {
   let ngonNgu = dom("#loaiNgonNgu").value;
   let moTa = dom("#MoTa").value;
 
-  let isvalid = validateForm();
-  if (!isvalid) {
-    return;
-  }
+  // let isvalid = validateForm();
+  // if (!isvalid) {
+  //   return;
+  // }
 
   // Tạo object từ lớp đối tương User (id phía server tự động nên để null)
   let user = new User(
@@ -191,18 +173,23 @@ dom(".modal-footer").addEventListener("click", (evt) => {
     ngonNgu,
     moTa
   );
-  
+
   // usersTemp = usersTemp.push(user);
   if (elementType === "add") {
+    let isvalid = validateForm();
+    if (!isvalid) {
+      return;
+    }
     addUsers(user);
   } else if (elementType === "update") {
+    let isvalid = validateForm();
+    if (!isvalid) {
+      return;
+    }
     updateUsers(id, user);
     console.log(id);
   }
-  
 });
-
-
 
 // Lắng nghe sự kiện nguyên bảng tblNguoiDung
 dom("#tblNguoiDung").addEventListener("click", (evt) => {
@@ -252,6 +239,12 @@ dom("#search").addEventListener("keydown", (evt) => {
   getUsers(evt.target.value);
 });
 
+// Check tài khoản
+function checkUsers(account) {
+  // console.log(users,account)
+  return users.find((user) => user.taiKhoan === account);
+}
+
 // Validation
 
 function validataAccount() {
@@ -264,14 +257,12 @@ function validataAccount() {
     return false;
   }
 
-  checkUsers(account);
-  if(usersdata !== usersnew){
+  let check = checkUsers(account);
+  if (check) {
     spanEl.classList.add("d-block");
     spanEl.innerHTML = "Tài khoản đã có";
     return false;
   }
-  console.log("usersdata",usersdata)
-  console.log("users",usersnew)
 
   spanEl.classList.remove("d-block");
   spanEl.innerHTML = "";
@@ -433,7 +424,6 @@ function validateForm() {
   return true;
 }
 
-console.log("tem2",users);
-console.log("usersdata",usersdata);
-console.log("users",users);
-
+console.log("tem2", users);
+console.log("usersdata", usersdata);
+console.log("users", users);
